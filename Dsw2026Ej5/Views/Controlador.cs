@@ -32,4 +32,31 @@ public class Controlador
         }
         return (consumoElectricos, consumoCombustible);
     }
+    public static bool AgregarVehiculo(string patente, string marca, string modelo, int anio,
+    double capacidadCarga, string codigoSucursal, string tipo,
+    double parametro1, double parametro2 = 0)
+    {
+        Sucursal? sucursal = Persistencia.GetSucursales()
+            .Find(s => s.GetCodigo() == codigoSucursal);
+
+        if (sucursal == null) return false;
+
+        Vehiculo vehiculo;
+        if (tipo == "1") // Eléctrico
+        {
+            vehiculo = new VehiculoElectrico(patente, marca, modelo, anio, capacidadCarga, sucursal, parametro1);
+        }
+        else // Combustible
+        {
+            vehiculo = new VehiculoCombustible(patente, marca, modelo, anio, capacidadCarga, sucursal, parametro1, parametro2);
+        }
+
+        Persistencia.AgregarVehiculo(vehiculo);
+        return true;
+    }
+
+    public static List<string> GetCodigosSucursales()
+    {
+        return Persistencia.GetSucursales().Select(s => s.GetCodigo()).ToList();
+    }
 }
