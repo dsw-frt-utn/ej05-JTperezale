@@ -27,6 +27,9 @@ public class ConsoleView
             else if (opcion == "2")
             {
                 Console.WriteLine("Agregando vehículo...");
+                    AgregarVehiculo();
+                    _vehiculos = Controlador.GetVehiculos(); // Refresca la lista
+                
             }
         }
         while (opcion != "3");
@@ -86,6 +89,112 @@ public class ConsoleView
         Console.Write("\n");
         Console.Write("\n");
         Console.WriteLine("Presione una tecla para salir...");
+        Console.ReadLine();
+    }
+    private static void AgregarVehiculo()
+    {
+        LimpiarPantalla();
+        DibujarLinea();
+        CentrarTexto("Agregar Vehículo", out int _);
+        DibujarLinea();
+        Console.WriteLine("\n0. Volver atrás\n");
+
+        // Tipo
+        Console.WriteLine("Tipo de vehículo:");
+        Console.WriteLine("1. Eléctrico");
+        Console.WriteLine("2. Combustible");
+        Console.Write("Opción: ");
+        string? tipo = Console.ReadLine();
+        if (tipo == "0") return;
+        if (tipo != "1" && tipo != "2")
+        {
+            Console.WriteLine("Opción inválida. Presione Enter para volver...");
+            Console.ReadLine();
+            return;
+        }
+
+        // Datos comunes
+        Console.Write("Patente: ");
+        string? patente = Console.ReadLine();
+        if (patente == "0") return;
+
+        Console.Write("Marca: ");
+        string? marca = Console.ReadLine();
+        if (marca == "0") return;
+
+        Console.Write("Modelo: ");
+        string? modelo = Console.ReadLine();
+        if (modelo == "0") return;
+
+        Console.Write("Año: ");
+        string? anioStr = Console.ReadLine();
+        if (anioStr == "0") return;
+        if (!int.TryParse(anioStr, out int anio))
+        {
+            Console.WriteLine("Año inválido. Presione Enter para volver...");
+            Console.ReadLine();
+            return;
+        }
+
+        Console.Write("Capacidad de carga (kg): ");
+        string? capacidadStr = Console.ReadLine();
+        if (capacidadStr == "0") return;
+        if (!double.TryParse(capacidadStr, out double capacidad))
+        {
+            Console.WriteLine("Capacidad inválida. Presione Enter para volver...");
+            Console.ReadLine();
+            return;
+        }
+
+        // Sucursal
+        List<string> sucursales = Controlador.GetCodigosSucursales();
+        Console.WriteLine("Sucursales disponibles: " + string.Join(", ", sucursales));
+        Console.Write("Código de sucursal: ");
+        string? sucursal = Console.ReadLine();
+        if (sucursal == "0") return;
+
+        // Datos específicos por tipo
+        double parametro1 = 0, parametro2 = 0;
+        if (tipo == "1")
+        {
+            Console.Write("kWh base: ");
+            string? kwhStr = Console.ReadLine();
+            if (kwhStr == "0") return;
+            if (!double.TryParse(kwhStr, out parametro1))
+            {
+                Console.WriteLine("Valor inválido. Presione Enter para volver...");
+                Console.ReadLine();
+                return;
+            }
+        }
+        else
+        {
+            Console.Write("Kilómetros por litro: ");
+            string? kmLStr = Console.ReadLine();
+            if (kmLStr == "0") return;
+            if (!double.TryParse(kmLStr, out parametro1))
+            {
+                Console.WriteLine("Valor inválido. Presione Enter para volver...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.Write("Litros extra: ");
+            string? litrosStr = Console.ReadLine();
+            if (litrosStr == "0") return;
+            if (!double.TryParse(litrosStr, out parametro2))
+            {
+                Console.WriteLine("Valor inválido. Presione Enter para volver...");
+                Console.ReadLine();
+                return;
+            }
+        }
+
+        bool ok = Controlador.AgregarVehiculo(patente!, marca!, modelo!, anio, capacidad, sucursal!, tipo, parametro1, parametro2);
+
+        DibujarLinea();
+        Console.WriteLine(ok ? "✓ Vehículo agregado correctamente." : "✗ Error: sucursal no encontrada.");
+        Console.WriteLine("Presione Enter para continuar...");
         Console.ReadLine();
     }
     private static void DibujarEncabezado(params string[] columnas)

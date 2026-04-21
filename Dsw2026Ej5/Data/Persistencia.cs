@@ -30,19 +30,31 @@ public class Persistencia
 
     private static void InicializarVehiculos()
     {
-        Sucursal s1 = Sucursales[0];
-        Sucursal s2 = Sucursales[1];
+        List<Vehiculo> guardados = Archivo.Leer(Sucursales);
 
-        VehiculoElectrico v1 = new VehiculoElectrico("AE123FG", "Renault", "Kangoo E-Tech", 2020, 1000, s1, 16);
-        VehiculoElectrico v2 = new VehiculoElectrico("AF456HI", "Ford", "E-Transit", 2021, 1300, s2, 16);
+        if (guardados.Count > 0)
+        {
+            Vehiculos.AddRange(guardados);
+        }
+        else
+        {
+            // Datos por defecto si no existe el archivo
+            Sucursal s1 = Sucursales[0];
+            Sucursal s2 = Sucursales[1];
 
-        VehiculoCombustible v3 = new VehiculoCombustible("AC789JK", "Iveco", "Daily", 2023, 1200, s1, 8, 1.5);
-        VehiculoCombustible v4 = new VehiculoCombustible("AD321LM", "Mercedes", "Sprinter", 2020, 1200, s2, 7, 1);
+            Vehiculos.Add(new VehiculoElectrico("AE123FG", "Renault", "Kangoo E-Tech", 2020, 1000, s1, 16));
+            Vehiculos.Add(new VehiculoElectrico("AF456HI", "Ford", "E-Transit", 2021, 1300, s2, 16));
+            Vehiculos.Add(new VehiculoCombustible("AC789JK", "Iveco", "Daily", 2023, 1200, s1, 8, 1.5));
+            Vehiculos.Add(new VehiculoCombustible("AD321LM", "Mercedes", "Sprinter", 2020, 1200, s2, 7, 1));
 
-        Vehiculos.Add(v1);
-        Vehiculos.Add(v2);
-        Vehiculos.Add(v3);
-        Vehiculos.Add(v4);
+            Archivo.Guardar(Vehiculos); // Guarda los datos por defecto
+        }
+    }
+
+    public static void AgregarVehiculo(Vehiculo vehiculo)
+    {
+        Vehiculos.Add(vehiculo);
+        Archivo.Guardar(Vehiculos); // Guarda cada vez que se agrega
     }
     public static List<Vehiculo> GetVehiculos()
     {
@@ -52,6 +64,13 @@ public class Persistencia
     public static Vehiculo? GetVehiculo(string patente)
     {
         return Vehiculos.Find(v => v.GetPatente() == patente);
+
+    }
+   
+
+    public static List<Sucursal> GetSucursales()
+    {
+        return Sucursales;
     }
 
     public static void InicializarDatos()
